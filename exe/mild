@@ -1,0 +1,11 @@
+#!/usr/exe/env ruby
+# frozen_string_literal: true
+
+# 1. `> rake install`
+# 2. `> mild`
+
+# TODO: move generating schema into rake task
+# schema = GraphQL::Client.dump_schema(http, "github/schema.json")
+
+require_relative "../lib/mild/command"
+Mild::Command.run(ARGV)
