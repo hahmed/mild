@@ -1,10 +1,6 @@
 # Mild
 
-Mild, makes your pull requests easier to manage.
-
-When I was hacking on the GitHub api (octokit.net), I found there was no easy way to find all the pull requests that had 50 changes in total for example. This gem gives you a really easy way to grep small PR's so you could review.
-
-Aside from this I found a couple of other scenarios where I found it would be really cool to pick up an old PR which I have already reviewed, and not got back to in a while.
+Mild, a GraphQL client example app using the GitHub api.
 
 ## Installation
 
@@ -14,21 +10,21 @@ Install Mild as a gem:
 
 ## Usage
 
-Here is the API I'm committing to, which is likely to change over time.
-
 First, make sure to export your GitHub token, which you can generate from GitHub on the personal access tokens page.
 
 ```shell
 $ export MILD_GITHUB_TOKEN=your_personal_access_token
 ```
 
-#### latest
+#### mentioned
 
 ```shell
 $ mild latest rails/rails
 ```
 
-Get all the latest pull requests for a repo. The output will look something like this;
+NOTE: Repo names without an owner are auto expanded, so rails becomes rails/rails.
+
+Get all pull requests where I have been mentioned. The output will look something like this;
 
 ```
 This change fixes to_json serialization
@@ -36,45 +32,13 @@ authored_by: datanoise, https://github.com/rails/rails/pull/4
 files changed: 1, total changes: 12
 ```
 
-#### smallest
-
-Get the smallest pull requests, which is calculated by looking at the number of additions and subtractions.
-
-```shell
-$ mild smallest rails/rails -c 50
-$ mild smallest rails -c 50
-```
-
-NOTE: there is a -c flag which is used for count, i.e. the total amount of changes to limit this query. The default amount is set to 25 changes.
-
 #### reviewed
 
-Get all pull requests that have been reviewed by me. You can pass in the -u flag to get all pull requests reviewed by that user instead. Useful for finding all pull requests that have been reviewed but still not merged.
-
 ```shell
-$ mild reviewed rails/rails -u hahmed
+$ mild reviewed rails/rails
 ```
 
-All available options
-
--u user (GitHub login)
--l limit (any number, default: 100)
--s status (open|closed|all, default: open)
--c limit (any number, default: 25)
-
-Not all options are available for every request.
-
-NOTE: Repo names without an owner are auto expanded, so rails becomes rails/rails.
-
-## WIP
-
-Here are a list of things I want to get done before I release this gem.
-
-- Implement reviewed
-- Implement smallest
-- Paginate (all requests in graphql will only pull first 100 items)
-- Cache results locally in a yaml file per repo ~./mild/repo_name.yaml
-- tty output
+Get all open pull requests that have been reviewed by me.
 
 ## Development
 

@@ -43,32 +43,53 @@ class Mild::CommandTest < Minitest::Test
     EOF
   end
 
-  def test_latest_outputs_repo_error_message_when_no_repo_provided
+  def test_mentioned_outputs_repo_error_message_when_no_repo_provided
     out, _ = capture_io do
-      Mild::Command.run(%w[latest])
+      Mild::Command.run(%w[mentioned])
     end
-    assert_equal "Error accessing repo, or the name is an invalid format. Try `rails/rails` or `rails`\n", out
+    assert_equal generic_error_message, out
   end
 
-  def test_latest_outputs_repo_error_message_when_repo_name_is_invalid
+  def test_mentioned_outputs_repo_error_message_when_repo_name_is_invalid
     out, _ = capture_io do
-      Mild::Command.run(%w[latest 9rails])
+      Mild::Command.run(%w[mentioned 9rails])
     end
-    assert_equal "Error accessing repo, or the name is an invalid format. Try `rails/rails` or `rails`\n", out
+    assert_equal generic_error_message, out
   end
 
-  def test_latest_outputs_pull_requests_sorted_by_latest
+  def test_mentioned_outputs_pull_requests_correctly
     out, _ = capture_io do
-      Mild::Command.run(%w[latest rails])
+      Mild::Command.run(%w[mentioned rails])
     end
     assert_includes out, "Add `ActionMailer.deprecator`"
     assert_includes out, "https://github.com/rails/rails/pull/46381"
   end
 
-  def test_reviewed_output_is_correct
+  def test_reviewed_outputs_repo_error_message_when_no_repo_provided
     out, _ = capture_io do
       Mild::Command.run(%w[reviewed])
     end
-    assert_equal "TODO\n", out
+    assert_equal generic_error_message, out
+  end
+
+  def test_reviewed_outputs_repo_error_message_when_repo_name_is_invalid
+    out, _ = capture_io do
+      Mild::Command.run(%w[reviewed 9rails])
+    end
+    assert_equal generic_error_message, out
+  end
+
+  def test_reviewed_outputs_pull_requests_correctly
+    out, _ = capture_io do
+      Mild::Command.run(%w[reviewed rails])
+    end
+    assert_includes out, "Add `ActionMailer.deprecator`"
+    assert_includes out, "https://github.com/rails/rails/pull/46381"
+  end
+
+  private
+
+  def generic_error_message
+    "Error accessing repo, or the name is an invalid format. Try `rails/rails` or `rails`\n"
   end
 end

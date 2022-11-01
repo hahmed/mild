@@ -29,6 +29,6 @@ module Mild
 end
 
 require_relative "command/help"
-require_relative "command/latest"
+require_relative "command/mentioned"
 require_relative "command/reviewed"
 require_relative "command/version"

@@ -6,24 +6,18 @@ require "graphql/client"
 module Mild
   class GitHubApi
     class << self
-      def pull_requests_by_latest(owner, repo, limit)
-        data = query(pull_request_by_latest_query, owner: owner, name: repo, limit: limit)
+      def pull_requests_by_reviewed(owner, repo, limit)
+        query = "type:pr state:open review-requested:$viewer repo:#{owner}/#{name}"
+        data = query(pull_request_by_reviewed_query, query: query, limit: limit)
 
-        data["repository"]["pullRequests"]["nodes"].map do |pr|
-          {
-            id: pr["number"],  
-            title: pr["title"],
-            body: pr["body"],
-            url: pr["url"],
-            author: pr["author"]["login"],
-            total_files_changed: pr["changedFiles"],
-            additions: pr["additions"],
-            deletions: pr["deletions"],
-            total_changes: pr["additions"].to_i + pr["deletions"].to_i,
-            created_at: pr["createdAt"],
-            updated_at: pr["updatedAt"],
-          }
-        end
+        map_data(data)
+      end
+
+      def pull_requests_by_mentioned(owner, repo, limit)
+        query = "type:pr state:open mentioned:$viewer repo:#{owner}/#{name}"
+        data = query(pull_requests_by_mentioned_query, query: query, limit: limit)
+
+        map_data(data)
       end
 
       private
@@ -38,33 +32,54 @@ module Mild
         response.original_hash["data"]
       end
 
-      def pull_request_by_latest_query
-        parsed = client.parse <<~GRAPHQL
-        query($owner: String!, $name: String!, $limit: Int!) {
-          repository(owner: $owner, name: $name) {
-            description,
-            pullRequests(last: $limit, states: [OPEN]) {
-              nodes {
-                additions,
-                deletions,
-                title,
-                body,
-                number,
-                url,
-                updatedAt,
-                createdAt,
-                changedFiles,
-                author {
-                  login
+      def graphql_base_query
+        <<~GRAPHQL
+        query($query: String!, $limit: Int!) {
+          search(query: $query, type: ISSUE, first: $limit) {
+            issueCount
+            edges {
+              node {
+                ... on PullRequest {
+                  title
+                  url
+                  createdAt
+                  updatedAt
+                  additions
+                  deletions
+                  author {
+                    login
+                  }
                 }
-              },
-              totalCount
+              }
             }
           }
         }
         GRAPHQL
+      end
 
-        const_set(:PullRequestByLatest, parsed)
+      def pull_request_by_reviewed_query
+        parsed = client.parse graphql_base_query
+
+        const_set(:PullRequestsByReviewed, parsed)
+      end
+
+      def pull_requests_by_mentioned_query
+        parsed = client.parse graphql_base_query
+
+        const_set(:PullRequestsByMentioned, parsed)
+      end
+
+      def map_data(data)
+        data["repository"]["pullRequests"]["nodes"].map do |pr|
+          {
+            title: pr["title"],
+            url: pr["url"],
+            author: pr["author"]["login"],
+            total_changes: pr["additions"].to_i + pr["deletions"].to_i,
+            created_at: pr["createdAt"],
+            updated_at: pr["updatedAt"],
+          }
+        end
       end
 
       def client
