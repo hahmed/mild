@@ -1,12 +1,10 @@
 # Mild
 
-Mild, makes your pull requests a little easier.
+Mild, makes your pull requests easier to manage.
 
 When I was hacking on the GitHub api (octokit.net), I found there was no easy way to find all the pull requests that had 50 changes in total for example. This gem gives you a really easy way to grep small PR's so you could review.
 
 Aside from this I found a couple of other scenarios where I found it would be really cool to pick up an old PR which I have already reviewed, and not got back to in a while.
-
-First off, lets install this thing already!
 
 ## Installation
 
@@ -72,10 +70,7 @@ NOTE: Repo names without an owner are auto expanded, so rails becomes rails/rail
 
 Here are a list of things I want to get done before I release this gem.
 
-- Fix the CLI
-- Fix tests so we don't rely on graphql to make a web request every time
 - Implement reviewed
-- Implement latest
 - Implement smallest
 - Paginate (all requests in graphql will only pull first 100 items)
 - Cache results locally in a yaml file per repo ~./mild/repo_name.yaml
