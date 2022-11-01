@@ -4,8 +4,14 @@ require "test_helper"
 require 'mild/configuration'
 
 class Mild::ConfigurationTest < Minitest::Test
-  def test_that_it_has_api_agent
-    assert_equal "Mild - makes your pull requests a little easier", Mild::Configuration.new.api_agent
+  def setup
+    Mild.configure do |config|
+      config.github_token = "123456789"
+    end
+  end
+
+  def reset
+    Mild.configuration.reset
   end
 
   def test_that_it_has_github_token

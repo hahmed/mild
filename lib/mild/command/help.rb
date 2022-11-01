@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
+require_relative "base_command"
+
 module Mild
-  class Command::Help
+  class Command::Help < BaseCommand
     def run(args)
       puts <<~EOF
       Welcome to mild, type in any of the commands below;

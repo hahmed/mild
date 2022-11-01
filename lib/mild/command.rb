@@ -2,7 +2,6 @@
 
 require 'optparse'
 
-
 module Mild
   class Command
     def self.run(args)

@@ -5,6 +5,9 @@ module Mild::Error
   class MildError < StandardError
   end
 
+  class QueryError < StandardError
+  end
+
   class RepoError < MildError
     attr_accessor :repo_name
 
